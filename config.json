@@ -1,7 +1,7 @@
 {
   "clientId": "Q0ZbpxDyfSiSkzLHcDvBcTCi2fFcLzC9BOGUufoQNRCf5Wly6W",
   "clientSecret": "fGjzdSwoFiksPSqaDAVxzUVNYi1cK8Xr0ggNGgWg",
-  "redirectUri": "https://carriertradingcenter.com/callback",
+  "redirectUri": "https://qbapi.rtb.cat/callback",
   "configurationEndpoint":
     "https://developer.api.intuit.com/.well-known/openid_sandbox_configuration/",
   "api_uri": "https://sandbox-quickbooks.api.intuit.com/v3/company/",
