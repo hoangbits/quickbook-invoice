@@ -17,7 +17,6 @@ router.get("/", function(req, res) {
       // persisted (in a SQL DB, for example).
       tools.saveToken(req.session, token);
       req.session.realmId = req.query.realmId;
-      req.session.realmId = 123145629669197;
       var errorFn = function(e) {
         console.log("Invalid JWT token!");
         console.log(e);
