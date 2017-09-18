@@ -15,8 +15,15 @@ router.get("/", function(req, res) {
     });
 
   // Set up API call (with OAuth2 accessToken)
-  var url =
+  let url =
     config.api_uri + req.session.realmId + "/query?query=select * from Invoice";
+
+  if (/^[0-9]+$/.test(req.query.DocNumber)) {
+    url += " where DocNumber = '" + req.query.DocNumber + "'";
+  } else {
+    res.json(error_res);
+  }
+
   console.log("Making API call to: " + url);
   var requestObj = {
     url: url,
@@ -36,7 +43,7 @@ router.get("/", function(req, res) {
         }
 
         // API Call was a success!
-        res.json(JSON.parse(response.body));
+        res.json(response.body);
       },
       function(err) {
         console.log(err);
