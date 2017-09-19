@@ -99,7 +99,7 @@ var Tools = function() {
     // Call refresh API
     return token.refresh().then(function(newToken) {
       // Store the new tokens
-      tools.saveToken(session, newToken);
+      tools.saveToken(newToken);
       return newToken;
     });
   };
@@ -144,6 +144,21 @@ var Tools = function() {
     session.tokenType = token.tokenType;
     session.data = token.data;
 
+    client.set("accessToken", token.accessToken, function(err, reply) {
+      console.log("accessToken save is:" + reply);
+    });
+    client.set("refreshToken", token.refreshToken, function(err, reply) {
+      console.log("refreshToken save is:" + reply);
+    });
+    client.set("tokenType", token.tokenType, function(err, reply) {
+      console.log("tokenType save is:" + reply);
+    });
+    client.set("data", token.data, function(err, reply) {
+      console.log("data save is:" + reply);
+    });
+  };
+
+  this.saveTokentoRedisWhenRefresh = function(token) {
     client.set("accessToken", token.accessToken, function(err, reply) {
       console.log("accessToken save is:" + reply);
     });
