@@ -99,7 +99,7 @@ var Tools = function() {
     // Call refresh API
     return token.refresh().then(function(newToken) {
       // Store the new tokens
-      tools.saveToken(newToken);
+      tools.saveTokentoRedisWhenRefresh(newToken);
       return newToken;
     });
   };
