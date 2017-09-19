@@ -28,8 +28,11 @@ router.get("/", function(req, res) {
       tools.saveToken(req.session, token);
 
       //refresh token hourly
-      let j = schedule.scheduleJob("39 * * * *", function() {
-        console.log("The answer to life, the universe, and everything!");
+      let j = schedule.scheduleJob("* /2 * * * *", function() {
+        console.log("Schedule refresh token are called");
+        request("/api_call/refresh", function(error, response, body) {
+          console.log("Hourly 39:" + response.statusCode);
+        });
       });
 
       req.session.realmId = req.query.realmId;
