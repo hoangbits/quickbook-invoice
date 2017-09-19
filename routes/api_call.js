@@ -101,8 +101,8 @@ router.get("/refresh", function(req, res) {
   let accessToken;
   client.get("accessToken", (err, reply) => {
     accessToken = reply;
+    if (!accessToken) return res.json({ error: "Not authorized" });
   });
-  if (!accessToken) return res.json({ error: "Not authorized" });
 
   let accessTokenFake, refreshToken, tokenType, data;
   client.get("accessToken").then(reply => {
