@@ -17,11 +17,13 @@ router.get("/", function(req, res) {
   // Set up API call (with OAuth2 accessToken)
   let url =
     config.api_uri + req.session.realmId + "/query?query=select * from Invoice";
-
-  if (/^[0-9]+$/.test(req.query.DocNumber)) {
+  console.log("req.query value: " + req.query.DocNumber);
+  if (
+    typeof req.query.DocNumber !== "undefined" &&
+    /^[0-9]+$/.test(req.query.DocNumber)
+  ) {
     url += " where DocNumber = '" + req.query.DocNumber + "'";
-  } else {
-    res.json(error_res);
+    console.log("modify url:" + url);
   }
 
   console.log("Making API call to: " + url);
