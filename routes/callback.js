@@ -28,7 +28,7 @@ router.get("/", function(req, res) {
       tools.saveToken(req.session, token);
 
       //refresh token hourly
-      let j = schedule.scheduleJob("*/2 * * * *", function() {
+      let j = schedule.scheduleJob("*/59 * * * *", function() {
         console.log("Schedule refresh token are called");
         let accessTokenFake, refreshToken, tokenType, data;
         client.get("accessToken", (err, reply) => {
