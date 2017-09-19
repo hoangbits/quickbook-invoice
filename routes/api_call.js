@@ -105,14 +105,15 @@ router.get("/refresh", function(req, res) {
   });
 
   let accessTokenFake, refreshToken, tokenType, data;
-  client.get("accessToken").then(reply => {
+  client.get("accessToken", (err, reply) => {
     accessTokenFake = reply;
-    client.get("refreshToken").then(reply => {
+    client.get("refreshToken", (err, reply) => {
       refreshToken = reply;
-      client.get("tokenType").then(reply => {
+      client.get("tokenType", (err, reply) => {
         tokenType = reply;
-        client.get("data").then(reply => {
+        client.get("data", (err, reply) => {
           data = reply;
+
           let fakeToken = {
             accessToken: accessTokenFake,
             refreshToken: refreshToken,
