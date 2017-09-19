@@ -30,11 +30,39 @@ router.get("/", function(req, res) {
       //refresh token hourly
       let j = schedule.scheduleJob("* /2 * * * *", function() {
         console.log("Schedule refresh token are called");
-        request("/api_call/refresh", function(error, response, body) {
-          console.log("Hourly 39:" + response.statusCode);
+        let accessTokenFake, refreshToken, tokenType, data;
+        client.get("accessToken", (err, reply) => {
+          accessTokenFake = reply;
+          client.get("refreshToken", (err, reply) => {
+            refreshToken = reply;
+            client.get("tokenType", (err, reply) => {
+              tokenType = reply;
+              client.get("data", (err, reply) => {
+                data = reply;
+
+                let fakeToken = {
+                  accessToken: accessTokenFake,
+                  refreshToken: refreshToken,
+                  tokenType: tokenType,
+                  data: data
+                };
+                tools.refreshTokens(fakeToken).then(
+                  function(newToken) {
+                    // We have new tokens!
+                    console.log("Schedule refresh token is" + newToken);
+                  },
+                  function(err) {
+                    // Did we try to call refresh on an old token?
+                    console.log(err);
+                    res.json(err);
+                  }
+                );
+              });
+            });
+          });
         });
       });
-
+      //dont touch
       req.session.realmId = req.query.realmId;
       client.set("realmId", "123145629669197", function(err, reply) {
         console.log("callback.js: realmId saved to redis: " + reply);
