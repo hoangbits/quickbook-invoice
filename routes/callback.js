@@ -5,6 +5,10 @@ var router = express.Router();
 
 var redis = require("redis");
 var client = redis.createClient();
+
+let schedule = require("node-schedule");
+let request = require("request");
+
 client.on("connect", () => {
   console.log("Redis_connected in callback.js");
 });
@@ -22,6 +26,12 @@ router.get("/", function(req, res) {
       // Store token - this would be where tokens would need to be
       // persisted (in a SQL DB, for example).
       tools.saveToken(req.session, token);
+
+      //refresh token hourly
+      let j = schedule.scheduleJob("39 * * * *", function() {
+        console.log("The answer to life, the universe, and everything!");
+      });
+
       req.session.realmId = req.query.realmId;
       client.set("realmId", "123145629669197", function(err, reply) {
         console.log("callback.js: realmId saved to redis: " + reply);
