@@ -98,23 +98,45 @@ router.get("/revoke", function(req, res) {
 // We recommend refreshing upon receiving a 401 Unauthorized response from Intuit.
 // A working example of this can be seen above: `/api_call`
 router.get("/refresh", function(req, res) {
-  var token = tools.getToken(req.session);
-  if (!token) return res.json({ error: "Not authorized" });
+  let accessToken;
+  client.get("accessToken", (err, reply) => {
+    accessToken = reply;
+  });
+  if (!accessToken) return res.json({ error: "Not authorized" });
 
-  tools.refreshTokens(req.session).then(
-    function(newToken) {
-      // We have new tokens!
-      res.json({
-        accessToken: newToken.accessToken,
-        refreshToken: newToken.refreshToken
+  let accessToken, refreshToken, tokenType, data;
+  client.get("accessToken").then(reply => {
+    accessToken = reply;
+    client.get("refreshToken").then(reply => {
+      refreshToken = reply;
+      client.get("tokenType").then(reply => {
+        tokenType = reply;
+        client.get("data").then(reply => {
+          data = reply;
+          let fakeToken = {
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+            tokenType: tokenType,
+            data: data
+          };
+          tools.refreshTokens(fakeToken).then(
+            function(newToken) {
+              // We have new tokens!
+              res.json({
+                accessToken: newToken.accessToken,
+                refreshToken: newToken.refreshToken
+              });
+            },
+            function(err) {
+              // Did we try to call refresh on an old token?
+              console.log(err);
+              res.json(err);
+            }
+          );
+        });
       });
-    },
-    function(err) {
-      // Did we try to call refresh on an old token?
-      console.log(err);
-      res.json(err);
-    }
-  );
+    });
+  });
 });
 
 module.exports = router;

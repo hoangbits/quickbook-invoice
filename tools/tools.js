@@ -93,8 +93,8 @@ var Tools = function() {
 
   // Refresh Token should be called if access token expires, or if Intuit
   // returns a 401 Unauthorized.
-  this.refreshTokens = function(session) {
-    var token = this.getToken(session);
+  this.refreshTokens = function(fakeToken) {
+    var token = this.getToken(fakeToken);
 
     // Call refresh API
     return token.refresh().then(function(newToken) {
@@ -159,14 +159,14 @@ var Tools = function() {
   };
 
   // Get the token object from session storage
-  this.getToken = function(session) {
-    if (!session.accessToken) return null;
+  this.getToken = function(fakeToken) {
+    if (!fakeToken.accessToken) return null;
 
     return tools.intuitAuth.createToken(
-      session.accessToken,
-      session.refreshToken,
-      session.tokenType,
-      session.data
+      fakeToken.accessToken,
+      fakeToken.refreshToken,
+      fakeToken.tokenType,
+      fakeToken.data
     );
   };
 
