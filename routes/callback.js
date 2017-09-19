@@ -3,6 +3,12 @@ var jwt = require("../tools/jwt.js");
 var express = require("express");
 var router = express.Router();
 
+var redis = require("redis");
+var client = redis.createClient();
+client.on("connect", () => {
+  console.log("Redis_connected in callback.js");
+});
+
 /** /callback **/
 router.get("/", function(req, res) {
   // Verify anti-forgery
@@ -17,6 +23,9 @@ router.get("/", function(req, res) {
       // persisted (in a SQL DB, for example).
       tools.saveToken(req.session, token);
       req.session.realmId = req.query.realmId;
+      client.set("realmId", "123145629669197", function(err, reply) {
+        console.log("callback.js: realmId saved to redis: " + reply);
+      });
       var errorFn = function(e) {
         console.log("Invalid JWT token!");
         console.log(e);

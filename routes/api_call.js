@@ -3,55 +3,64 @@ var config = require("../config.json");
 var request = require("request");
 var express = require("express");
 var router = express.Router();
-
+let redis = require("redis");
+let client = redis.createClient();
+client.on("connect", () => {
+  console.log("Redis connected in api_call.js ");
+});
 /** /api_call **/
 router.get("/", function(req, res) {
-  var token = tools.getToken(req.session);
-  if (!token) return res.json({ error: "Not authorized" });
-  if (!req.session.realmId)
-    return res.json({
-      error:
-        "No realm ID.  QBO calls only work if the accounting scope was passed!"
-    });
+  let accessToken, realmId;
+  client.get("accessToken", (err, reply) => {
+    accessToken = reply;
+    client.get("realmId", (err, reply) => {
+      realmId = reply;
+      if (!accessToken) return res.json({ error: "Not authorized" });
+      if (!realmId)
+        return res.json({
+          error:
+            "No realm ID.  QBO calls only work if the accounting scope was passed!"
+        });
 
-  // Set up API call (with OAuth2 accessToken)
-  let url =
-    config.api_uri + req.session.realmId + "/query?query=select * from Invoice";
-  console.log("req.query value: " + req.query.DocNumber);
-  if (
-    typeof req.query.DocNumber !== "undefined" &&
-    /^[0-9]+$/.test(req.query.DocNumber)
-  ) {
-    url += " where DocNumber = '" + req.query.DocNumber + "'";
-    console.log("modify url:" + url);
-  }
-
-  console.log("Making API call to: " + url);
-  var requestObj = {
-    url: url,
-    headers: {
-      Authorization: "Bearer " + token.accessToken,
-      Accept: "application/json"
-    }
-  };
-
-  // Make API call
-  request(requestObj, function(err, response) {
-    // Check if 401 response was returned - refresh tokens if so!
-    tools.checkForUnauthorized(req, requestObj, err, response).then(
-      function({ err, response }) {
-        if (err || response.statusCode != 200) {
-          return res.json({ error: err, statusCode: response.statusCode });
-        }
-
-        // API Call was a success!
-        res.json(response.body);
-      },
-      function(err) {
-        console.log(err);
-        return res.json(err);
+      // Set up API call (with OAuth2 accessToken)
+      let url = config.api_uri + realmId + "/query?query=select * from Invoice";
+      console.log("req.query.DocNumber value: " + req.query.DocNumber);
+      if (
+        typeof req.query.DocNumber !== "undefined" &&
+        /^[0-9]+$/.test(req.query.DocNumber)
+      ) {
+        url += " where DocNumber = '" + req.query.DocNumber + "'";
+        console.log("modify url:" + url);
       }
-    );
+
+      console.log("Making API call to: " + url);
+      var requestObj = {
+        url: url,
+        headers: {
+          Authorization: "Bearer " + accessToken,
+          Accept: "application/json"
+        }
+      };
+
+      // Make API call
+      request(requestObj, function(err, response) {
+        // Check if 401 response was returned - refresh tokens if so!
+        tools.checkForUnauthorized(req, requestObj, err, response).then(
+          function({ err, response }) {
+            if (err || response.statusCode != 200) {
+              return res.json({ error: err, statusCode: response.statusCode });
+            }
+
+            // API Call was a success!
+            res.json(response.body);
+          },
+          function(err) {
+            console.log(err);
+            return res.json(err);
+          }
+        );
+      });
+    });
   });
 });
 
