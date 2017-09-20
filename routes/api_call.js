@@ -52,7 +52,7 @@ router.get("/", function(req, res) {
             }
 
             // API Call was a success!
-            res.json(response.body);
+            res.json(JSON.parse(response.body));
           },
           function(err) {
             console.log(err);
