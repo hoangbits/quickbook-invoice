@@ -11,6 +11,7 @@ client.on("connect", () => {
 /** /api_call **/
 router.get("/", function(req, res) {
   let accessToken, realmId;
+  let customerId;
   client.get("accessToken", (err, reply) => {
     accessToken = reply;
     client.get("realmId", (err, reply) => {
@@ -24,13 +25,14 @@ router.get("/", function(req, res) {
 
       // Set up API call (with OAuth2 accessToken)
       let url = config.api_uri + realmId + "/query?query=select * from Invoice";
-      console.log("req.query.DocNumber value: " + req.query.DocNumber);
+      
+      console.log("req.query.id value: " + req.query.id);
       if (
-        typeof req.query.DocNumber !== "undefined" &&
-        /^[0-9]+$/.test(req.query.DocNumber)
+        typeof req.query.id !== "undefined" &&
+        /^[0-9]+$/.test(req.query.id)
       ) {
-        url += " where DocNumber = '" + req.query.DocNumber + "'";
-        console.log("modify url:" + url);
+        customerId = req.query.id;        
+        console.log("customerId value:" + customerId);
       }
 
       console.log("Making API call to: " + url);
@@ -50,9 +52,17 @@ router.get("/", function(req, res) {
             if (err || response.statusCode != 200) {
               return res.json({ error: err, statusCode: response.statusCode });
             }
-
+            //Filter data before sent in back to client
+            let body = JSON.parse(response.body);
+            let Invoices = body.QueryResponse.Invoice;
+            let filterInvoices = Invoices.filter(object=>{
+              if(typeof object.CustomerRef.value === "undefined"){
+                return false;
+              }
+              return object.CustomerRef.value.toString() === customerId.toString();
+            });
             // API Call was a success!
-            res.json(JSON.parse(response.body));
+            res.json(filterInvoices);
           },
           function(err) {
             console.log(err);
