@@ -64,7 +64,7 @@ router.get("/", function(req, res) {
       });
       //dont touch
       req.session.realmId = req.query.realmId;
-      client.set("realmId", "193514594490869", function(err, reply) {
+      client.set("realmId", "123145629669197", function(err, reply) {
         console.log("callback.js: realmId saved to redis: " + reply);
       });
       var errorFn = function(e) {

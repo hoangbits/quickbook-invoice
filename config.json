@@ -1,10 +1,10 @@
 {
-  "clientId": "Q0CfciCGYXFExA067SlDFqwY607I1PW7pjRqf8gVYKZas8yBxz",
-  "clientSecret": "tWO5LGjq9UQFqcaWlt3lYc4Wc7L60bDgj34J7NoP",
-  "redirectUri": "http://localhost:3000/callback",
+  "clientId": "Q0ZbpxDyfSiSkzLHcDvBcTCi2fFcLzC9BOGUufoQNRCf5Wly6W",
+  "clientSecret": "fGjzdSwoFiksPSqaDAVxzUVNYi1cK8Xr0ggNGgWg",
+  "redirectUri": "https://qbapi.rtb.cat/callback",
   "configurationEndpoint":
     "https://developer.api.intuit.com/.well-known/openid_sandbox_configuration/",
-  "api_uri": "https://sandbox-quickbooks.api.intuit.com/v3/company/",
+  "api_uri": "https://quickbooks.api.intuit.com/v3/company/",
   "scopes": {
     "sign_in_with_intuit": ["openid", "profile", "email", "phone", "address"],
     "connect_to_quickbooks": "com.intuit.quickbooks.accounting",
