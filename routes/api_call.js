@@ -54,8 +54,18 @@ router.get("/", function(req, res) {
             }
             //Filter data before sent in back to client
             let body = JSON.parse(response.body);
-            let Invoices = body.QueryResponse.Invoice;
-            let filterInvoices = Invoices.filter(object=>{
+            // let Invoices = body.QueryResponse.Invoice;
+            // let filterInvoices = Invoices.filter(object=>{
+            //   if(typeof object.CustomerRef.value === "undefined"){
+            //     return false;
+            //   } 
+            //   if(typeof customerId !== "undefined") {
+            //     return object.CustomerRef.value.toString() === customerId.toString();
+            //   }
+            //   return true;
+            // });
+            //way 2:
+            body.QueryResponse.Invoice = body.QueryResponse.Invoice.filter(object=>{
               if(typeof object.CustomerRef.value === "undefined"){
                 return false;
               } 
@@ -64,8 +74,9 @@ router.get("/", function(req, res) {
               }
               return true;
             });
+            
             // API Call was a success!
-            res.json(filterInvoices);
+            res.json(body);
           },
           function(err) {
             console.log(err);
