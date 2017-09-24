@@ -58,8 +58,11 @@ router.get("/", function(req, res) {
             let filterInvoices = Invoices.filter(object=>{
               if(typeof object.CustomerRef.value === "undefined"){
                 return false;
+              } 
+              if(typeof customerId !== "undefined") {
+                return object.CustomerRef.value.toString() === customerId.toString();
               }
-              return object.CustomerRef.value.toString() === customerId.toString();
+              return true;
             });
             // API Call was a success!
             res.json(filterInvoices);
