@@ -34,6 +34,9 @@ router.get('/', function(req, res) {
         customerId = req.query.id;
         console.log('customerId value:' + customerId);
       }
+      if (req.query.id.toString() === 'all') {
+        customerId = 'all';
+      }
 
       console.log('Making API call to: ' + url);
       var requestObj = {
@@ -70,6 +73,7 @@ router.get('/', function(req, res) {
                 if (typeof object.CustomerRef.value === 'undefined') {
                   return false;
                 }
+                let b = customerId;
                 if (typeof customerId !== 'undefined') {
                   if (customerId.toString() == 'all' && object.Balance > 0) {
                     return true;

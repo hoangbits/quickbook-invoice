@@ -1,23 +1,23 @@
-var tools = require("../tools/tools.js");
-var jwt = require("../tools/jwt.js");
-var express = require("express");
+var tools = require('../tools/tools.js');
+var jwt = require('../tools/jwt.js');
+var express = require('express');
 var router = express.Router();
 
-var redis = require("redis");
+var redis = require('redis');
 var client = redis.createClient();
 
-let schedule = require("node-schedule");
-let request = require("request");
+let schedule = require('node-schedule');
+let request = require('request');
 
-client.on("connect", () => {
-  console.log("Redis_connected in callback.js");
+client.on('connect', () => {
+  console.log('Redis_connected in callback.js');
 });
 
 /** /callback **/
-router.get("/", function(req, res) {
+router.get('/', function(req, res) {
   // Verify anti-forgery
   if (!tools.verifyAntiForgery(req.session, req.query.state)) {
-    return res.send("Error - invalid anti-forgery CSRF response!");
+    return res.send('Error - invalid anti-forgery CSRF response!');
   }
 
   // Exchange auth code for access token
@@ -28,16 +28,16 @@ router.get("/", function(req, res) {
       tools.saveToken(req.session, token);
 
       //refresh token hourly
-      let j = schedule.scheduleJob("*/59 * * * *", function() {
-        console.log("Schedule refresh token are called");
+      let j = schedule.scheduleJob('*/59 * * * *', function() {
+        console.log('Schedule refresh token are called');
         let accessTokenFake, refreshToken, tokenType, data;
-        client.get("accessToken", (err, reply) => {
+        client.get('accessToken', (err, reply) => {
           accessTokenFake = reply;
-          client.get("refreshToken", (err, reply) => {
+          client.get('refreshToken', (err, reply) => {
             refreshToken = reply;
-            client.get("tokenType", (err, reply) => {
+            client.get('tokenType', (err, reply) => {
               tokenType = reply;
-              client.get("data", (err, reply) => {
+              client.get('data', (err, reply) => {
                 data = reply;
 
                 let fakeToken = {
@@ -49,7 +49,7 @@ router.get("/", function(req, res) {
                 tools.refreshTokens(fakeToken).then(
                   function(newToken) {
                     // We have new tokens!
-                    console.log("Schedule refresh token is" + newToken);
+                    console.log('Schedule refresh token is' + newToken);
                   },
                   function(err) {
                     // Did we try to call refresh on an old token?
@@ -64,13 +64,13 @@ router.get("/", function(req, res) {
       });
       //dont touch
       req.session.realmId = req.query.realmId;
-      client.set("realmId", "123145629669197", function(err, reply) {
-        console.log("callback.js: realmId saved to redis: " + reply);
+      client.set('realmId', '123145629669197', function(err, reply) {
+        console.log('callback.js: realmId saved to redis: ' + reply);
       });
       var errorFn = function(e) {
-        console.log("Invalid JWT token!");
+        console.log('Invalid JWT token!');
         console.log(e);
-        res.redirect("/");
+        res.redirect('/');
       };
 
       if (token.data.id_token) {
@@ -80,7 +80,7 @@ router.get("/", function(req, res) {
             token.data.id_token,
             function() {
               // Callback function - redirect to /connected
-              res.redirect("connected");
+              res.redirect('connected');
             },
             errorFn
           );
@@ -89,7 +89,7 @@ router.get("/", function(req, res) {
         }
       } else {
         // Redirect to /connected
-        res.redirect("connected");
+        res.redirect('connected');
       }
     },
     function(err) {
