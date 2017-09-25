@@ -79,7 +79,6 @@ router.get('/', function(req, res) {
                     customerId.toString()
                   );
                 }
-                return true;
               }
             );
 
