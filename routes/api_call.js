@@ -72,7 +72,7 @@ router.get('/', function(req, res) {
                 }
                 if (
                   typeof customerId !== 'undefined' &&
-                  customerId.toString() === 'all' &&
+                  customerId.toString() == 'all' &&
                   object.Balance > 0
                 ) {
                   return true;
