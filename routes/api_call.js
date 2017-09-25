@@ -70,19 +70,16 @@ router.get('/', function(req, res) {
                 if (typeof object.CustomerRef.value === 'undefined') {
                   return false;
                 }
-                if (
-                  typeof customerId !== 'undefined' &&
-                  customerId.toString() == 'all' &&
-                  object.Balance > 0
-                ) {
-                  return true;
+                if (typeof customerId !== 'undefined') {
+                  if (customerId.toString() == 'all' && object.Balance > 0) {
+                    return true;
+                  }
+                  return (
+                    object.CustomerRef.value.toString() ===
+                    customerId.toString()
+                  );
                 }
-                if (
-                  typeof customerId !== 'undefined' &&
-                  object.CustomerRef.value.toString() == customerId.toString()
-                ) {
-                  return true;
-                }
+                return true;
               }
             );
 
