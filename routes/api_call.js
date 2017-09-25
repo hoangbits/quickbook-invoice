@@ -77,12 +77,12 @@ router.get('/', function(req, res) {
                 ) {
                   return true;
                 }
-                if (typeof customerId !== 'undefined') {
-                  return (
-                    object.CustomerRef.value.toString() == customerId.toString()
-                  );
+                if (
+                  typeof customerId !== 'undefined' &&
+                  object.CustomerRef.value.toString() == customerId.toString()
+                ) {
+                  return true;
                 }
-                return true;
               }
             );
 
