@@ -79,8 +79,7 @@ router.get('/', function(req, res) {
                 }
                 if (typeof customerId !== 'undefined') {
                   return (
-                    object.CustomerRef.value.toString() ===
-                    customerId.toString()
+                    object.CustomerRef.value.toString() == customerId.toString()
                   );
                 }
                 return true;
