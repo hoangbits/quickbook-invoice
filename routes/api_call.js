@@ -34,7 +34,11 @@ router.get('/', function(req, res) {
         customerId = req.query.id;
         console.log('customerId value:' + customerId);
       }
-      if (req.query.id.toString() === 'all') {
+
+      if (
+        typeof req.query.id !== 'undefined' &&
+        req.query.id.toString() === 'all'
+      ) {
         customerId = 'all';
       }
 
